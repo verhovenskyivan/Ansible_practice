@@ -1,0 +1,31 @@
+strategies:
+  - strategy: 'strategy-1'
+    policy: consistent_hash
+    hash_key: cache_key
+    go_direct: false
+    groups:
+      - *g1
+      - *g2
+    scheme http
+    failover:
+      ring_mode: exhaust_ring
+      response_codes:
+        - 404
+        - 503
+      health_check:
+        - passive
+  - strategy: 'strategy-2'
+    policy: rr_strict
+    hash_key: cache_key
+    go_direct: true
+    groups:
+      - *g1
+      - *g2
+    scheme http
+    failover:
+      ring_mode: exhaust_ring
+      response_codes:
+        - 404
+        - 503
+      health_check:
+        - passive
