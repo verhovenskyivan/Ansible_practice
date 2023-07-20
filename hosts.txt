@@ -1,0 +1,2 @@
+[stage_server]
+CentOS ansible_hosts=192.168.0.178  ansbile_user=ivan ansible_ssh_private_key=/home/ivan/.ssh
