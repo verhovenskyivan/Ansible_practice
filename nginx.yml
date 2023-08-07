@@ -1,7 +1,11 @@
-- hosts: "all"
+- name: install nginx
+  hosts: all
+
   tasks:
-  - name: "Install nginx via apt"
-    ansible.builtin.apt:
-      name: "nginx"
-      state: "latest"
-      update_cache: true
+  - name: install nginx
+    yum: name=htp state=lates
+
+  - name: Copy my page to server
+    copy: src={{source_file}} dest={{destin_file}} mode=0555
+    notify: Restart  Nginx
+
