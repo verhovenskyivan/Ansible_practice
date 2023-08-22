@@ -1,0 +1,18 @@
+- name: Create Kafka User
+  hosts: kafka-brokers  # Replace with the appropriate group of Kafka brokers
+  become: yes
+  become_user: kafka  # Replace with the user that has Kafka admin privileges
+
+  tasks:
+    - name: Add Kafka User
+      command: kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --add --allow-principal User:{kafka_user} --operation Read --topic {topic_name}
+      vars:
+        kafka_user: "your_username"
+        topic_name: "your_topic_name"
+      ignore_errors: yes  # This is optional; it allows the playbook to continue if the ACL already exists
+
+    - name: Reload Kafka Brokers
+      command: kafka-server-start.sh -daemon /etc/kafka/server.properties
+      async: 3600  # Time in seconds to allow the Kafka broker to restart (adjust as needed)
+      poll: 0
+      become: yes
