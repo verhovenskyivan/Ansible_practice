@@ -1,0 +1,19 @@
+---
+name: start DB
+hosts: all
+tasks:
+    - name: install postgresql
+      command: sudo yum install postgresql
+
+    - name: Start DB
+      service: 
+          name: postgresql 
+          state: started
+    
+    - name: Install nginx
+      command: sudo yum install nginx
+    
+    - name: Start Nginx
+      service:
+          name: nginx
+          state: started
