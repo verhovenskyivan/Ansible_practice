@@ -1,0 +1,16 @@
+---
+   name: create DB user
+   hosts: all 
+   tasks:
+      - name: install psql
+        packages:
+            - postgresql
+        yum:  name='{{packages}}' state=present
+      
+      - name: start psql
+        service: name=postgresql state=started
+    
+      - name: create db user
+        postgresql_user:
+            name: "{{my_user}}"
+            password: "{{my_password}}"
