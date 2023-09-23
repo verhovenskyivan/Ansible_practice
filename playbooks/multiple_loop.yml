@@ -1,0 +1,17 @@
+---
+    name: Create users
+    hosts: all
+    tasks:
+        - user: name='{{ item.name }}' state=present uid="{{ item.uid }}"
+          loop:
+              - name: Ivan 
+                uid: 0709
+              - name: Jamil
+                uid: 0901
+              - name: Kamil
+                uid: 3011
+
+                #or
+              - {name: Ivan, uid: 0709}
+              - {name: Jamil, uid: 0901}
+              - {name: Kamil, uid: 3011}
