@@ -1,0 +1,10 @@
+---
+    name: install packages
+    hosts: all
+    tasks: 
+        - yum: name="{{ item }}" state=present
+          with_items:
+              - nginx
+              - mongodb
+              - postgresql
+              - ksh
