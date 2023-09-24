@@ -1,0 +1,67 @@
+---
+- name: Setup Monitoring on Ubuntu Servers
+  hosts: ubuntu_servers
+  become: yes
+  tasks:
+    - name: Update APT package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Prometheus
+      apt:
+        name: prometheus
+        state: present
+
+    - name: Install Node Exporter (for collecting server metrics)
+      apt:
+        name: prometheus-node-exporter
+        state: present
+
+    - name: Start and enable Prometheus service
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
+
+    - name: Configure Prometheus
+      template:
+        src: prometheus.yml.j2
+        dest: /etc/prometheus/prometheus.yml
+      notify:
+        - Restart Prometheus
+
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+
+    - name: Start and enable Grafana service
+      systemd:
+        name: grafana-server
+        enabled: yes
+        state: started
+
+    - name: Add Grafana data source
+      uri:
+        url: http://localhost:3000/api/datasources
+        method: POST
+        body: '{"name":"Prometheus","type":"prometheus","url":"http://localhost:9090","access":"proxy","basicAuth":false}'
+        status_code: 200
+        headers:
+          Content-Type: "application/json"
+        force_basic_auth: yes
+        user: admin
+        password: your_grafana_admin_password
+      when: grafana_data_source_created is not defined or grafana_data_source_created == false
+
+    - name: Install Grafana plugins (optional)
+      command: grafana-cli plugins install <plugin-name>
+      args:
+        creates: /var/lib/grafana/plugins/<plugin-name>
+      ignore_errors: yes
+      when: grafana_plugins_installed is not defined or grafana_plugins_installed == false
+
+    - name: Restart Prometheus
+      systemd:
+        name: prometheus
+        state: restarted
