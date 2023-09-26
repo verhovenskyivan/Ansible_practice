@@ -1,0 +1,20 @@
+tasks:
+  - name: Install Postgresql
+    service:
+      name: "{{item}}"
+      state: started
+    with_items:
+      - postgresql
+      - postgresql-server
+    - name: "Install Python packages"
+      pip: "name={{ item }}  state=present"
+      with_items:
+        - psycopg2-binary
+- name: Ensure postgresql is at the latest version
+    ansible.builtin.yum:
+      name: postgresql
+      state: latest
+  - name: Ensure that postgresql is started
+    ansible.builtin.service:
+      name: postgresql
+      state: started
