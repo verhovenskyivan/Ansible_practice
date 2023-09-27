@@ -1,0 +1,21 @@
+   tasks:
+       - name: install mysql 
+         apt: 
+          name: mysql
+       - name: mysql_db_start
+         service:
+          name: mysql
+          state: started
+          login_user: root
+          login_password: "{{ mysql_root_password }}"
+       - name: add sample data to database
+          copy:
+            src: dump.sql
+            dest: /tmp/dump.sql
+       - name: insert_sample_data_into_database
+          mysql_db:
+            name: testdb
+            state: import
+            target: /tmp/dump.sql
+            login_user: root           
+            login_password: "{{ mysql_root_password }}"
